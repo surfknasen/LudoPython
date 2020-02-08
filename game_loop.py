@@ -1,8 +1,9 @@
 import pygame
-from pygame import (
-    Vector2
-)
 import board
+import player
+from helpers import (
+    Color
+)
 
 pygame.init()
 
@@ -10,41 +11,32 @@ running = True
 screen = pygame.display.set_mode([596, 596])
 clock = pygame.time.Clock()
 
-playing_board = board.Board()
+game_board = board.Board()
 boardImg = pygame.transform.scale(pygame.image.load('ludo.png'), (596, 596))
 
-player_pos = playing_board.green_start
-current_pos = 0
+green_player = player.Player(Color.green, game_board.green_start)
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.MOUSEBUTTONUP: # DEBUGGING
-            pos = pygame.mouse.get_pos()
-            print("POS: " + str(pos))
+        if event.type == pygame.MOUSEBUTTONUP:
+            print("down")
 
     screen.fill((255, 255, 255))
     screen.blit(boardImg, (0, 0))
+
+    green_player.movePlayer(6, game_board.green_path)
+    green_player.drawPlayer(screen)
 
     #DEBUGGING, SHOWING PATH
     #for x in range(len(playing_board.green_path)):
     #    pygame.draw.circle(screen, (0, 255, 0), (int(playing_board.green_path[x].x), int(playing_board.green_path[x].y)), 10)
     #DEBUGGING, SHOWING PATH
 
-    if player_pos != playing_board.green_path[current_pos]:
-        dx, dy = (playing_board.green_path[current_pos].x - player_pos.x, playing_board.green_path[current_pos].y - player_pos.y)
-        stepsx, stepsy = (dx / 2., dy / 2.)
-        player_pos.x += stepsx
-        player_pos.y += stepsy
-    else:
-        current_pos += 1
-
-    pygame.draw.circle(screen, (0, 255, 0), (int(player_pos.x), int(player_pos.y)), 10)
-
     pygame.display.update()
-    clock.tick(25)
+    clock.tick(30)
 
 # Done! Time to quit.
 pygame.quit()
