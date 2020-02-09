@@ -5,7 +5,9 @@ from pygame import (
 
 # builds and stores the paths
 class Board:
-    def __init__(self):
+    def __init__(self, screen_size):
+        self.board_img = pygame.transform.scale(pygame.image.load('ludo.png'), (screen_size, screen_size))
+
         # declare the start positions of the different colors, these were calculated in gimp
         self.green_start = Vector2(554.5, 350)
         self.yellow_start = Vector2(400, 250)
@@ -20,6 +22,9 @@ class Board:
 
         # populate the path lists with the rest of the positions
         self.create_paths()
+
+    def draw_board(self, screen):
+        screen.blit(self.board_img, (0, 0))
 
     def create_paths(self):
         green_dir = ['left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left']

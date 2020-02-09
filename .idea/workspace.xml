@@ -2,11 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fed1df88-a580-4f1a-98a6-b2ed35676b13" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dice6.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/learning.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_loop.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_loop.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_loop.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

@@ -1,42 +1,81 @@
 import pygame
+import random
 import board
 import player
+import dice
+from pygame import (
+    Vector2
+)
 from helpers import (
     Color
 )
 
-pygame.init()
+class Game:
+    def __init__(self):
+        pygame.init() # initialize pygame
+        self.screen_size = 596
 
-running = True
-screen = pygame.display.set_mode([596, 596])
-clock = pygame.time.Clock()
+        # set up board
+        self.running = True
+        self.screen = pygame.display.set_mode([self.screen_size, self.screen_size])
+        self.clock = pygame.time.Clock()
+        self.board = board.Board(self.screen_size)
 
-game_board = board.Board()
-boardImg = pygame.transform.scale(pygame.image.load('ludo.png'), (596, 596))
+        self.update() # start the game loop
 
-green_player = player.Player(Color.green, game_board.green_start)
+    def update(self):
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        """
+        PSEUDOCODE:
+        1 Draw dice with click to roll
+        2 Animate dice
+        3 Show step amount
+        4 Show available actions / Check player input
+            - If player clicks on character, show where it can move to
+            - If player clicks on spot it can move to, move there
+        5 If player can move, move player
+        6 If dice showed 6 and it's not the second roll:
+            - Go back to 1
+        7 Check if player on another character(s), if true: remove character(s), elif in goal: move character to goal
+        8 Loop restarts
+        """
 
-        if event.type == pygame.MOUSEBUTTONUP:
-            print("down")
+        green_player = player.Player(Color.green, self.board.green_start)
+        _dice = dice.Dice(self.screen, self.screen_size)
 
-    screen.fill((255, 255, 255))
-    screen.blit(boardImg, (0, 0))
+        while self.running:
+            # DRAW BOARD #
+            self.board.draw_board(self.screen)
+            # DICE #
+            if not _dice.completed_roll and not _dice.roll:
+                _dice.show_static_dice()
 
-    green_player.movePlayer(6, game_board.green_path)
-    green_player.drawPlayer(screen)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: # close button
+                    self.running = False
 
-    #DEBUGGING, SHOWING PATH
-    #for x in range(len(playing_board.green_path)):
-    #    pygame.draw.circle(screen, (0, 255, 0), (int(playing_board.green_path[x].x), int(playing_board.green_path[x].y)), 10)
-    #DEBUGGING, SHOWING PATH
+                if event.type == pygame.MOUSEBUTTONUP:
+                    _dice.start_roll()
 
-    pygame.display.update()
-    clock.tick(30)
+            if _dice.roll:
+                _dice.animate_dice()
 
-# Done! Time to quit.
-pygame.quit()
+            #green_player.movePlayer(1, self.board.green_path)
+            #green_player.drawPlayer(self.screen)
+
+            pygame.display.update()
+            self.clock.tick(30)
+
+        pygame.quit()
+
+if __name__ == '__main__':
+    game = Game() # starts the game
+
+
+
+
+
+
+
+
+
