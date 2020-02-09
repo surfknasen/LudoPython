@@ -6,13 +6,13 @@ from pygame import (
 # builds and stores the paths
 class Board:
     def __init__(self, screen_size):
-        self.board_img = pygame.transform.scale(pygame.image.load('ludo.png'), (screen_size, screen_size))
+        self.board_img = pygame.transform.scale(pygame.image.load('images/ludo.png'), (screen_size, screen_size))
 
         # declare the start positions of the different colors, these were calculated in gimp
         self.green_start = Vector2(554.5, 350)
-        self.yellow_start = Vector2(400, 250)
-        self.red_start = Vector2(400, 250)
-        self.blue_start = Vector2(400, 250)
+        self.yellow_start = Vector2(247.3, 554.8)
+        self.red_start = Vector2(349.7, 42.8)
+        self.blue_start = Vector2(42.5, 247.6)
 
         # set the start position to the first item in the paths
         self.green_path = [self.green_start]
@@ -29,8 +29,8 @@ class Board:
     def create_paths(self):
         green_dir = ['left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left']
         yellow_dir = ['up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left', 'down', 'left', 'up']
-        red_dir = ['right', 'up', 'right', 'down', 'right', 'down', 'left', 'down', 'left', 'up', 'left', 'up', 'right']
-        blue_dir = ['down', 'right', 'down', 'left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down']
+        red_dir = ['down', 'right', 'down', 'left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down']
+        blue_dir = ['right', 'up', 'right', 'down', 'right', 'down', 'left', 'down', 'left', 'up', 'left', 'up', 'right']
 
         dir_lists = [green_dir, yellow_dir, red_dir, blue_dir]
         paths = [self.green_path, self.yellow_path, self.red_path, self.blue_path]

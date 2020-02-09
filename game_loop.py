@@ -7,6 +7,7 @@ from pygame import (
     Vector2
 )
 from helpers import (
+    StartPosition,
     Color
 )
 
@@ -21,10 +22,24 @@ class Game:
         self.clock = pygame.time.Clock()
         self.board = board.Board(self.screen_size)
 
+        self.green_players = []
+        self.yellow_players = []
+        self.red_players = []
+        self.blue_players = []
+        self.all_players = [self.green_players, self.yellow_players, self.red_players, self.blue_players]
+        self.create_players()
+
+        self.create_players()
         self.update() # start the game loop
 
-    def update(self):
+    def create_players(self):
+        for i in range(4):
+            self.green_players.append(player.Player(StartPosition.green.value[i], self.board.green_path, Color.green))
+            self.yellow_players.append(player.Player(StartPosition.yellow.value[i], self.board.yellow_path, Color.yellow))
+            self.red_players.append(player.Player(StartPosition.red.value[i], self.board.red_path, Color.red))
+            self.blue_players.append(player.Player(StartPosition.blue.value[i], self.board.blue_path, Color.blue))
 
+    def update(self):
         """
         PSEUDOCODE:
         1 Draw dice with click to roll
@@ -40,7 +55,6 @@ class Game:
         8 Loop restarts
         """
 
-        green_player = player.Player(Color.green, self.board.green_start)
         _dice = dice.Dice(self.screen, self.screen_size)
 
         while self.running:
@@ -50,6 +64,7 @@ class Game:
             if not _dice.completed_roll and not _dice.roll:
                 _dice.show_static_dice()
 
+            # INPUT #
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: # close button
                     self.running = False
@@ -57,9 +72,15 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONUP:
                     _dice.start_roll()
 
+            # ROLL DICE #
             if _dice.roll:
                 _dice.animate_dice()
 
+            for i in range(len(self.all_players)):
+                for player in self.all_players[i]:
+                    if _dice.completed_roll:
+                        player.movePlayer(1)
+                    player.drawPlayer(self.screen)
             #green_player.movePlayer(1, self.board.green_path)
             #green_player.drawPlayer(self.screen)
 
