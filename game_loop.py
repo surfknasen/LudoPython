@@ -8,7 +8,7 @@ from pygame import (
 )
 from helpers import (
     StartPosition,
-    Color
+    Color,
 )
 
 class Game:
@@ -22,22 +22,25 @@ class Game:
         self.clock = pygame.time.Clock()
         self.board = board.Board(self.screen_size)
 
+        #TEMP
         self.green_players = []
         self.yellow_players = []
         self.red_players = []
         self.blue_players = []
         self.all_players = [self.green_players, self.yellow_players, self.red_players, self.blue_players]
-        self.create_players()
+
+        self.current_playing = 0
 
         self.create_players()
         self.update() # start the game loop
 
+    #TEMP
     def create_players(self):
         for i in range(4):
-            self.green_players.append(player.Player(StartPosition.green.value[i], self.board.green_path, Color.green))
-            self.yellow_players.append(player.Player(StartPosition.yellow.value[i], self.board.yellow_path, Color.yellow))
-            self.red_players.append(player.Player(StartPosition.red.value[i], self.board.red_path, Color.red))
-            self.blue_players.append(player.Player(StartPosition.blue.value[i], self.board.blue_path, Color.blue))
+            self.green_players.append(player.Player(StartPosition.green.value[i], self.board.green_path, Color.green, "Green"))
+            self.yellow_players.append(player.Player(StartPosition.yellow.value[i], self.board.yellow_path, Color.yellow, "Yellow"))
+            self.red_players.append(player.Player(StartPosition.red.value[i], self.board.red_path, Color.red, "Red"))
+            self.blue_players.append(player.Player(StartPosition.blue.value[i], self.board.blue_path, Color.blue, "Blue"))
 
     def update(self):
         """
@@ -60,29 +63,29 @@ class Game:
         while self.running:
             # DRAW BOARD #
             self.board.draw_board(self.screen)
-            # DICE #
-            if not _dice.completed_roll and not _dice.roll:
-                _dice.show_static_dice()
 
-            # INPUT #
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT: # close button
-                    self.running = False
-
-                if event.type == pygame.MOUSEBUTTONUP:
-                    _dice.start_roll()
-
-            # ROLL DICE #
-            if _dice.roll:
-                _dice.animate_dice()
-
+            # DRAW PLAYERS
             for i in range(len(self.all_players)):
                 for player in self.all_players[i]:
                     if _dice.completed_roll:
                         player.movePlayer(1)
                     player.drawPlayer(self.screen)
-            #green_player.movePlayer(1, self.board.green_path)
-            #green_player.drawPlayer(self.screen)
+
+            # DICE #
+            current_team = self.all_players[self.current_playing][0].team
+            if not _dice.completed_roll and not _dice.roll:
+                _dice.show_static_dice(current_team)
+            # ROLL DICE #
+            if _dice.roll:
+                _dice.animate_dice(current_team)
+
+            # INPUT #
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: # clo se button
+                    self.running = False
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    _dice.start_roll()
 
             pygame.display.update()
             self.clock.tick(30)

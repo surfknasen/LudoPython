@@ -1,10 +1,11 @@
 import pygame
 
 class Player:
-    def __init__(self, start_pos, path, color):
+    def __init__(self, start_pos, path, color, team):
         self.position = start_pos
         self.path = path
         self.color = color
+        self.team = team
         self.currentPosIndex = 0
 
     def movePlayer(self, steps_to_move):
