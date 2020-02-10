@@ -39,12 +39,14 @@ class Board:
         step_amount = 51.2 # how many coordinates to move during a step, measured in gimp
 
         for i in range(4): # because there are 4 colors
-            step_index = 0
-            for step_axis in range(len(steps)):
-                dir_vector = self.get_direction_vector(dir_lists[i][step_axis])
+            step_index = 0 #
+            for axis in range(len(steps)):
+                # get the direction vector
+                dir_vector = self.get_direction_vector(dir_lists[i][axis])
 
-                # for each step in one axis, calculate the coordiantes
-                for step in range(steps[step_axis]):
+                # for each step in the current axis, calculate the coordiantes
+                for step in range(steps[axis]):
+                    # add the step amount * direction to the previous path position
                     x = paths[i][step_index].x + (step_amount * dir_vector.x)
                     y = paths[i][step_index].y + (step_amount * dir_vector.y)
 
