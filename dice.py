@@ -11,7 +11,8 @@ class Dice:
 
         self.roll_time = 3000 # ms
         self.roll_start = 0
-        self.current_dice_img = self.images[0]
+        self.dice_img = self.images[0]
+        self.dice_num = 0
         self.current_team_color = ""
         self.roll = False # used from the main update loop to check whether to animate dice
         self.completed_roll = False
@@ -28,7 +29,8 @@ class Dice:
         time_since_roll = pygame.time.get_ticks() - self.roll_start
         if time_since_roll < self.roll_time:
             rand = random.randrange(0, 6)
-            self.current_dice_img = self.images[rand]
+            self.dice_num = rand
+            self.dice_img = self.images[rand]
         else:
             self.roll = False
             self.completed_roll = True
@@ -42,7 +44,7 @@ class Dice:
     def draw_dice(self):
         self.transparent_background()
         self.current_player_text()
-        img = pygame.image.load(self.current_dice_img)
+        img = pygame.image.load(self.dice_img)
         self.screen.blit(img, (self.center, self.center))
 
     def transparent_background(self):

@@ -20,6 +20,8 @@ class Board:
         self.red_path = [self.red_start]
         self.blue_path = [self.blue_start]
 
+        self.possible_moves = []
+
         # populate the path lists with the rest of the positions
         self.create_paths()
 
@@ -62,3 +64,4 @@ class Board:
             return Vector2(0, -1)
         elif _dir == 'down':
             return Vector2(0, 1)
+

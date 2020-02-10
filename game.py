@@ -27,6 +27,8 @@ class Game:
             self.all_players.append(new_players)
 
         self.current_playing = 0
+        self.selected_player = None
+        self.move_player = False
 
         self.update() # start the game loop
 
@@ -66,7 +68,14 @@ class Game:
 
             # Logic
             self.throw_dice()
-            self.move_player()
+            if self.selected_player is not None and not self.move_player:
+                self.show_moves()
+            elif self.move_player and self.selected_player is not None:
+                self.selected_player.possible_moves.clear()
+                moved = self.selected_player.move_player()
+                if moved:
+                    self.move_player = False
+                    self.selected_player = None
 
             # Render
             self.render()
@@ -79,14 +88,20 @@ class Game:
             if event.type == pygame.QUIT: # clo se button
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONUP:
-                self.dice.start_roll()
+                if not self.dice.completed_roll:
+                    self.dice.start_roll()
+                else: # check if a player has been clicked
+                    for i in range(len(self.all_players)):
+                        for player in self.all_players[i]:
+                            mouse_pos = pygame.mouse.get_pos()
+                            if player.is_over_player(mouse_pos):
+                                self.selected_player = player
+                            elif player.is_over_move(mouse_pos, self.dice.dice_num):
+                                self.selected_player.currentPosIndex += self.dice.dice_num
+                                self.move_player = True
 
-    def move_player(self):
-        # DRAW PLAYERS - TEMP
-        for i in range(len(self.all_players)):
-            for player in self.all_players[i]:
-                if self.dice.completed_roll:
-                    player.move_player(1)
+    def show_moves(self):
+        self.selected_player.show_moves(self.dice.dice_num)
 
     def throw_dice(self):
         # DICE #
@@ -104,6 +119,7 @@ class Game:
         for i in range(len(self.all_players)):
             for player in self.all_players[i]:
                 player.draw_player(self.screen)
+                player.draw_moves(self.screen)
         # DICE
         if not self.dice.completed_roll: # if it hasn't been rolled, show it
             self.dice.draw_dice()
