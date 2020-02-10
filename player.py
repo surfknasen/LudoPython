@@ -1,11 +1,10 @@
 import pygame
 
 class Player:
-    def __init__(self, start_pos, path, color, team):
+    def __init__(self, start_pos, path, color):
         self.position = start_pos
         self.path = path
         self.color = color
-        self.team = team
         self.currentPosIndex = 0
 
     def move_player(self, steps_to_move):
@@ -20,4 +19,4 @@ class Player:
     def draw_player(self, screen):
         x = int(self.position.x)
         y = int(self.position.y)
-        pygame.draw.circle(screen, self.color, (x, y), 10)
+        pygame.draw.circle(screen, self.color.value, (x, y), 10)

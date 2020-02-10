@@ -1,8 +1,7 @@
 import pygame
 import game
-from pygame import (
-    Vector2
-)
+from pygame import Vector2
+from helpers import Color
 import pygame_extended as gui
 
 
@@ -15,40 +14,57 @@ class MainMenu:
         self.center = self.screen_size // 2
 
         self.current_screen = 0 # change when button pressed
-        self.draw_next_screen = True
-        self.screens = [self.choose_play_type]
+        self.update_screen = True
         self.buttons = []
+
+        self.team_btn_states = ['None', 'Human', 'AI']
+        self.selected_players = {}
 
         self.update()
 
     def update(self):
+        menu_txt = gui.Text("Menu", 32, Vector2(self.center, 50))
+        self.create_buttons()
+
         while self.running:
-            if self.draw_next_screen:
-                self.screens[self.current_screen]()
-                self.draw_next_screen = False
+            if self.update_screen:
+                menu_txt.draw(self.screen)
+                self.draw_buttons()
                 pygame.display.update()
+                self.update_screen = False
 
             self.handle_input()
         pygame.quit()
 
-    def choose_play_type(self):
-        center = self.center
+    def create_buttons(self):
+        btn_offset = 100
+        blue_btn = gui.Button(self.team_btn_states[0], 20, Vector2(self.center - btn_offset, 200 - btn_offset), Vector2(100, 50), Color.blue, self.team_btn_clicked)
+        red_btn = gui.Button(self.team_btn_states[0], 20, Vector2(self.center + btn_offset, 200 - btn_offset), Vector2(100, 50), Color.red, self.team_btn_clicked)
+        yellow_btn = gui.Button(self.team_btn_states[0], 20, Vector2(self.center - btn_offset, 200), Vector2(100, 50), Color.yellow, self.team_btn_clicked)
+        green_btn = gui.Button(self.team_btn_states[0], 20, Vector2(self.center + btn_offset, 200), Vector2(100, 50), Color.green, self.team_btn_clicked)
+        start_btn = gui.Button("Start", 20, Vector2(self.center, 300), Vector2(100, 50), Color.black, self.start_game)
+        self.buttons = [green_btn, yellow_btn, blue_btn, red_btn, start_btn]
 
-        menu_txt = gui.Text("Menu", 32, Vector2(center, center - 50))
-        menu_txt.draw(self.screen)
-        ai_btn = gui.Button("Ai", 20, Vector2(center - 100, center), Vector2(100, 50), self.ai_btn_clicked)
-        ai_btn.draw(self.screen)
-        friends_btn = gui.Button("Friends", 20, Vector2(center + 100, center), Vector2(100, 50), self.friends_btn_clicked)
-        friends_btn.draw(self.screen)
+    def draw_buttons(self):
+        for button in self.buttons:
+            button.draw(self.screen)
 
-        self.buttons.append(ai_btn)
-        self.buttons.append(friends_btn)
+    def team_btn_clicked(self, button):
+        index = self.team_btn_states.index(button.text)
+        if index == len(self.team_btn_states) - 1:
+            index = 0
+        else:
+            index += 1
 
-    def ai_btn_clicked(self):
-        print("AI CLICKED")
+        button.text = self.team_btn_states[index]
+        self.selected_players[button.color] = self.team_btn_states[index]
+        if self.selected_players[button.color] == self.team_btn_states[0]: # if it's None, remove it
+            del self.selected_players[button.color]
+        self.update_screen = True
 
-    def friends_btn_clicked(self):
-        print("FRIENDS CLICKED")
+    def start_game(self, button):
+        game.Game(self.screen_size, self.selected_players) # start the game
+        self.running = False
 
     def handle_input(self):
         for event in pygame.event.get():
@@ -58,8 +74,6 @@ class MainMenu:
                 mouse_pos = pygame.mouse.get_pos()
                 for button in self.buttons:
                     button.is_over(mouse_pos)
-                        #_game = game.Game(self.screen_size)
-                        #return
 
 if __name__ == '__main__':
     MainMenu() # starts the menu

@@ -5,11 +5,12 @@ import dice
 from helpers import (
     StartPosition,
     Color,
+    Team
 )
 
-class Game:
 
-    def __init__(self, screen_size):
+class Game:
+    def __init__(self, screen_size, colors):
         self.screen_size = screen_size
         # set up board
         self.running = True
@@ -18,25 +19,26 @@ class Game:
         self.board = board.Board(self.screen_size)
         self.dice = dice.Dice(self.screen, self.screen_size)
 
-        #TEMP
-        self.green_players = []
-        self.yellow_players = []
-        self.red_players = []
-        self.blue_players = []
-        self.all_players = [self.green_players, self.yellow_players, self.red_players, self.blue_players]
+        self.all_players = []
+        for color in colors.keys(): # add the color (player) if the color should play
+            new_players = []
+            for i in range(4):
+                new_players.append(player.Player(StartPosition.get_pos(color)[i], self.get_path(color), color))
+            self.all_players.append(new_players)
 
         self.current_playing = 0
 
-        self.create_players()
         self.update() # start the game loop
 
-    #TEMP
-    def create_players(self):
-        for i in range(4):
-            self.green_players.append(player.Player(StartPosition.green[i], self.board.green_path, Color.green, "Green"))
-            self.yellow_players.append(player.Player(StartPosition.yellow[i], self.board.yellow_path, Color.yellow, "Yellow"))
-            self.red_players.append(player.Player(StartPosition.red[i], self.board.red_path, Color.red, "Red"))
-            self.blue_players.append(player.Player(StartPosition.blue[i], self.board.blue_path, Color.blue, "Blue"))
+    def get_path(self, color):
+        if color == Color.green:
+            return self.board.green_path
+        elif color == Color.yellow:
+            return self.board.yellow_path
+        elif color == Color.red:
+            return self.board.red_path
+        elif color == Color.blue:
+            return self.board.blue_path
 
     def update(self):
         """
@@ -88,7 +90,7 @@ class Game:
 
     def throw_dice(self):
         # DICE #
-        current_team = self.all_players[self.current_playing][0].team # get the team name
+        current_team = Team.get_name(self.all_players[self.current_playing][0].color) # get the team name
         if not self.dice.completed_roll and not self.dice.roll: # if not rolling or have rolled
             self.dice.show_static_dice(current_team)
         # ROLL DICE #
