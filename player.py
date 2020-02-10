@@ -8,6 +8,7 @@ class Player:
         self.path = path
         self.color = color
         self.currentPosIndex = -1
+        self.on_field = False
         self.scale = 7
 
         self.possible_moves = []
@@ -35,19 +36,19 @@ class Player:
             return True
         return False
 
-    # WORK IN PROGRESS
+    def can_move(self, dice_num):
+        if self.currentPosIndex == -1:
+            if dice_num == 1 or dice_num == 6:
+                return True
+            else:
+                return False
+        else:
+            return True
+
     def show_moves(self, dice_num):
         self.possible_moves.clear()
-        if self.currentPosIndex == -1: # if it's -1, it's not on the field
-            if dice_num == 0: # 0 equals 1
-                self.currentPosIndex = 0
-                self.possible_moves.append(self.path[0])
-            elif dice_num == 6:
-                self.currentPosIndex = 0
-                self.possible_moves.append(self.path[0])
-                self.possible_moves.append(self.path[6])
-        else:
-            self.possible_moves.append(self.path[self.currentPosIndex + dice_num])
+        if self.can_move(dice_num):
+            self.possible_moves.append(self.path[self.currentPosIndex+dice_num])
 
     def draw_moves(self, screen):
         for move in self.possible_moves:

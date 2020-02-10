@@ -68,14 +68,23 @@ class Game:
 
             # Logic
             self.throw_dice()
-            if self.selected_player is not None and not self.move_player:
-                self.show_moves()
-            elif self.move_player and self.selected_player is not None:
-                self.selected_player.possible_moves.clear()
-                moved = self.selected_player.move_player()
-                if moved:
-                    self.move_player = False
-                    self.selected_player = None
+            if self.dice.completed_roll:
+                can_play = False
+                for i in range(4):
+                    if self.all_players[self.current_playing][i].can_move(self.dice.dice_num):
+                        can_play = True
+                        break
+                if can_play:
+                    print("can play")
+                    if self.selected_player is not None and not self.move_player:
+                        self.show_moves()
+                    elif self.move_player and self.selected_player is not None:
+                        self.selected_player.possible_moves.clear()
+                        moved = self.selected_player.move_player()
+                        if moved:
+                            self.next_player()
+                else:
+                    self.next_player()
 
             # Render
             self.render()
@@ -101,7 +110,20 @@ class Game:
                                 self.move_player = True
 
     def show_moves(self):
+        for player in self.all_players: # remove the other moves
+            for i in range(4):
+                if player[i] != self.selected_player:
+                    player[i].possible_moves.clear()
         self.selected_player.show_moves(self.dice.dice_num)
+
+    def next_player(self): # reset
+        self.selected_player = None
+        self.move_player = False
+        if self.current_playing == len(self.all_players) - 1:
+            self.current_playing = 0
+        else:
+            self.current_playing += 1
+        self.dice.completed_roll = False
 
     def throw_dice(self):
         # DICE #

@@ -9,7 +9,7 @@ class Dice:
         self.screen_size = screen_size
         self.center = (screen_size // 2) - 51.5 # calculate the screen center by using the screen size and half of the dice width/height
 
-        self.roll_time = 3000 # ms
+        self.roll_time = 1000 # ms
         self.roll_start = 0
         self.dice_img = self.images[0]
         self.dice_num = 0
@@ -28,13 +28,13 @@ class Dice:
     def animate_dice(self, current_team):
         time_since_roll = pygame.time.get_ticks() - self.roll_start
         if time_since_roll < self.roll_time:
-            rand = random.randrange(0, 6)
+            rand = random.randrange(1, 7)
             self.dice_num = rand
-            self.dice_img = self.images[rand]
+            self.dice_img = self.images[rand-1]
         else:
             self.roll = False
             self.completed_roll = True
-            pygame.time.wait(2000) # so that the player has time to see what number
+            pygame.time.wait(1000) # so that the player has time to see what number
             return
 
         # make it roll fast at the start and then slow down
