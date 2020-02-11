@@ -18,12 +18,13 @@ class Game:
         self.clock = pygame.time.Clock()
         self.board = board.Board(self.screen_size)
         self.dice = dice.Dice(self.screen, self.screen_size)
-
+        self.occupied_positions = []
         self.all_players = []
         for color in colors.keys(): # add the color (player) if the color should play
             new_players = []
             for i in range(4):
-                new_players.append(player.Player(StartPosition.get_pos(color)[i], self.get_path(color), color))
+                new_players.append(player.Player(StartPosition.get_pos(color)[i], self.get_path(color), color, self))
+                self.occupied_positions.append(new_players[i].pos)
             self.all_players.append(new_players)
 
         self.current_playing = 0
@@ -83,14 +84,30 @@ class Game:
                 if not self.dice.completed_roll:
                     self.dice.start_roll()
                 else: # check if a player has been clicked
-                    for i in range(len(self.all_players)):
-                        for player in self.all_players[i]:
-                            mouse_pos = pygame.mouse.get_pos()
-                            if player.is_over_player(mouse_pos):
-                                self.selected_player = player
-                            elif player.is_over_move(mouse_pos, self.dice.dice_num):
-                                self.selected_player.currentPosIndex += self.dice.dice_num
-                                self.move_player = True
+                    self.player_input()
+
+    def player_input(self):
+        mouse_pos = pygame.mouse.get_pos()
+        for i in range(len(self.all_players)): # check first if it's on a move position
+            for player in self.all_players[i]:
+                if player.is_over_move(mouse_pos, self.dice.dice_num):
+                    self.selected_player.currentPosIndex += self.dice.dice_num
+                    if self.selected_player.pos in self.occupied_positions:
+                        self.occupied_positions.remove(self.selected_player.pos)
+                    self.move_player = True
+                    self.selected_player.scale = self.selected_player.start_scale
+                    return
+
+        for i in range(len(self.all_players)): # if it's not on a move position, check if a player was clicked
+            for player in self.all_players[i]:
+                if player.is_over_player(mouse_pos):
+                    if self.selected_player == player: # unselect the player
+                        self.clear_player_moves()
+                        self.selected_player.scale = self.selected_player.start_scale
+                        self.selected_player = None
+                    else:
+                        self.selected_player = player
+                        self.selected_player.scale += 2
 
     def player_action(self):
         if self.dice.completed_roll: # if the dice has been rolled, it can roll
@@ -106,6 +123,7 @@ class Game:
                     self.selected_player.possible_moves.clear() # clear the move indicators
                     moved = self.selected_player.move_player() # move the player and store the result in 'moved'
                     if moved and not self.dice.double_roll: # when moved is true, go to the next player if it can't roll again
+                        self.occupied_positions.append(self.selected_player.pos)
                         self.next_player()
                     elif moved: # play again, reset
                         self.double_roll_reset()
@@ -127,7 +145,8 @@ class Game:
         for player in self.all_players: # remove the other move indicators, so only one is shown at once
             for i in range(4):
                 if player[i] != self.selected_player:
-                    player[i].possible_moves.clear()
+                    player[i].scale = player[i].start_scale
+                player[i].possible_moves.clear()
 
     def next_player(self): # reset
         self.selected_player = None
@@ -154,8 +173,8 @@ class Game:
         # PLAYERS
         for i in range(len(self.all_players)):
             for player in self.all_players[i]:
-                player.draw_player(self.screen)
                 player.draw_moves(self.screen)
+                player.draw_player(self.screen)
         # DICE
         if not self.dice.completed_roll: # if it hasn't been rolled, show it
             self.dice.draw_dice()

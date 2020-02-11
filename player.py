@@ -3,13 +3,15 @@ from helpers import Color
 import math
 
 class Player:
-    def __init__(self, start_pos, path, color):
+    def __init__(self, start_pos, path, color, game_class):
         self.pos = start_pos
         self.path = path
         self.color = color
         self.currentPosIndex = -1
         self.on_field = False
-        self.scale = 7
+        self.start_scale = 7
+        self.scale = self.start_scale
+        self.game_class = game_class
 
         self.possible_moves = []
 
@@ -39,11 +41,16 @@ class Player:
     def can_move(self, dice_num):
         if self.currentPosIndex == -1:
             if dice_num == 1 or dice_num == 6:
-                return True
+                return self._spot_free(dice_num)
             else:
                 return False
-        else:
+        return self._spot_free(dice_num)
+
+    def _spot_free(self, dice_num):
+        if self.path[self.currentPosIndex + dice_num] not in self.game_class.occupied_positions:
             return True
+        else:
+            return False
 
     def show_moves(self, dice_num):
         self.possible_moves.clear()
