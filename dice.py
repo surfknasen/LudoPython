@@ -15,6 +15,7 @@ class Dice:
         self.dice_num = 0
         self.current_team_color = ""
         self.roll = False # used from the main update loop to check whether to animate dice
+        self.double_roll = False
         self.completed_roll = False
 
     def show_static_dice(self, current_team):
@@ -28,10 +29,12 @@ class Dice:
     def animate_dice(self, current_team):
         time_since_roll = pygame.time.get_ticks() - self.roll_start
         if time_since_roll < self.roll_time:
-            rand = random.randrange(1, 7)
+            rand = random.randrange(1, 7) # 1 to 6
             self.dice_num = rand
             self.dice_img = self.images[rand-1]
         else:
+            if self.dice_num == 6: # FIX
+                self.double_roll = not self.double_roll
             self.roll = False
             self.completed_roll = True
             pygame.time.wait(1000) # so that the player has time to see what number

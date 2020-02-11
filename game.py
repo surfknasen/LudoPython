@@ -65,26 +65,9 @@ class Game:
         while self.running:
             # Input
             self.handle_input()
-
             # Logic
             self.throw_dice()
-            if self.dice.completed_roll:
-                can_play = False
-                for i in range(4):
-                    if self.all_players[self.current_playing][i].can_move(self.dice.dice_num):
-                        can_play = True
-                        break
-                if can_play:
-                    print("can play")
-                    if self.selected_player is not None and not self.move_player:
-                        self.show_moves()
-                    elif self.move_player and self.selected_player is not None:
-                        self.selected_player.possible_moves.clear()
-                        moved = self.selected_player.move_player()
-                        if moved:
-                            self.next_player()
-                else:
-                    self.next_player()
+            self.player_action()
 
             # Render
             self.render()
@@ -109,12 +92,42 @@ class Game:
                                 self.selected_player.currentPosIndex += self.dice.dice_num
                                 self.move_player = True
 
+    def player_action(self):
+        if self.dice.completed_roll: # if the dice has been rolled, it can roll
+            can_play = False
+            for i in range(4): # check if the current playing is able to move (by checking each player unit)
+                if self.all_players[self.current_playing][i].can_move(self.dice.dice_num):
+                    can_play = True
+                    break
+            if can_play: # if it can play
+                if self.selected_player is not None and not self.move_player: # check if has selected a player and not already moved
+                    self.show_moves()
+                elif self.move_player: # if the player has been moved and
+                    self.selected_player.possible_moves.clear() # clear the move indicators
+                    moved = self.selected_player.move_player() # move the player and store the result in 'moved'
+                    if moved and not self.dice.double_roll: # when moved is true, go to the next player if it can't roll again
+                        self.next_player()
+                    elif moved: # play again, reset
+                        self.double_roll_reset()
+            else:
+                self.next_player()
+
+    def double_roll_reset(self):
+        self.dice.completed_roll = False
+        self.move_player = False
+        self.selected_player = None
+        self.clear_player_moves()
+
     def show_moves(self):
-        for player in self.all_players: # remove the other moves
+        self.clear_player_moves()
+        if self.selected_player in self.all_players[self.current_playing]: # if the selected player is the currently playing
+            self.selected_player.show_moves(self.dice.dice_num)
+
+    def clear_player_moves(self):
+        for player in self.all_players: # remove the other move indicators, so only one is shown at once
             for i in range(4):
                 if player[i] != self.selected_player:
                     player[i].possible_moves.clear()
-        self.selected_player.show_moves(self.dice.dice_num)
 
     def next_player(self): # reset
         self.selected_player = None
@@ -124,6 +137,7 @@ class Game:
         else:
             self.current_playing += 1
         self.dice.completed_roll = False
+        self.dice.double_roll = False
 
     def throw_dice(self):
         # DICE #
