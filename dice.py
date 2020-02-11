@@ -33,8 +33,8 @@ class Dice:
             self.dice_num = rand
             self.dice_img = self.images[rand-1]
         else:
-            if self.dice_num == 6: # FIX
-                self.double_roll = not self.double_roll
+            if self.dice_num == 6 and not self.double_roll:
+                self.double_roll = True
             self.roll = False
             self.completed_roll = True
             pygame.time.wait(1000) # so that the player has time to see what number
