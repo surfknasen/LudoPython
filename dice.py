@@ -8,32 +8,34 @@ class Dice:
         self.screen = screen
         self.screen_size = screen_size
         self.center = (screen_size // 2) - 51.5 # calculate the screen center by using the screen size and half of the dice width/height
+        self.current_playing = ""
 
-        self.roll_time = 1000 # ms
+        self.roll_time = 100 # ms
         self.roll_start = 0
         self.dice_img = self.images[0]
         self.dice_num = 0
-        self.current_team_color = ""
         self.roll = False # used from the main update loop to check whether to animate dice
         self.double_roll = False
         self.completed_roll = False
 
-    def show_static_dice(self, current_team):
+    def show_static_dice(self, current_playing):
         self.completed_roll = False
-        self.current_team_color = current_team
+        self.current_playing = current_playing
 
     def start_roll(self):
         self.roll = True
         self.roll_start = pygame.time.get_ticks()
 
-    def animate_dice(self, current_team):
+    def animate_dice(self):
         time_since_roll = pygame.time.get_ticks() - self.roll_start
         if time_since_roll < self.roll_time:
             rand = random.randrange(1, 7) # 1 to 6
             self.dice_num = rand
             self.dice_img = self.images[rand-1]
         else:
-            if self.dice_num == 6 and not self.double_roll:
+            if self.double_roll is True:
+                self.double_roll = False
+            elif self.dice_num == 6:
                 self.double_roll = True
             self.roll = False
             self.completed_roll = True
@@ -56,8 +58,8 @@ class Dice:
 
     def current_player_text(self):
         font = pygame.font.Font('freesansbold.ttf', 32)
-        cur_team = "{0}'s turn".format(self.current_team_color)
+        cur_team = "{0}'s turn".format(self.current_playing)
         text = font.render(cur_team, True, (255, 255, 255))
-        textRect = text.get_rect()
-        textRect.center = (self.screen_size // 2, self.center - 50)
-        self.screen.blit(text, textRect)
+        text_rect = text.get_rect()
+        text_rect.center = (self.screen_size // 2, self.center - 50)
+        self.screen.blit(text, text_rect)

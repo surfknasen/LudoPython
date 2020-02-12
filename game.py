@@ -5,7 +5,7 @@ import dice
 from helpers import (
     StartPosition,
     Color,
-    Team
+    Team,
 )
 
 
@@ -18,13 +18,13 @@ class Game:
         self.clock = pygame.time.Clock()
         self.board = board.Board(self.screen_size)
         self.dice = dice.Dice(self.screen, self.screen_size)
-        self.occupied_positions = []
+        self.occupied_positions = {}
         self.all_players = []
         for color in colors.keys(): # add the color (player) if the color should play
             new_players = []
             for i in range(4):
                 new_players.append(player.Player(StartPosition.get_pos(color)[i], self.get_path(color), color, self))
-                self.occupied_positions.append(new_players[i].pos)
+                self.occupied_positions[new_players[i]] = new_players[i].pos
             self.all_players.append(new_players)
 
         self.current_playing = 0
@@ -91,9 +91,9 @@ class Game:
         for i in range(len(self.all_players)): # check first if it's on a move position
             for player in self.all_players[i]:
                 if player.is_over_move(mouse_pos, self.dice.dice_num):
-                    self.selected_player.currentPosIndex += self.dice.dice_num
-                    if self.selected_player.pos in self.occupied_positions:
-                        self.occupied_positions.remove(self.selected_player.pos)
+                    self.selected_player.current_pos_index += self.dice.dice_num
+                    if self.selected_player.pos in self.occupied_positions.values():
+                        del self.occupied_positions[self.selected_player]
                     self.move_player = True
                     self.selected_player.scale = self.selected_player.start_scale
                     return
@@ -107,7 +107,6 @@ class Game:
                         self.selected_player = None
                     else:
                         self.selected_player = player
-                        self.selected_player.scale += 2
 
     def player_action(self):
         if self.dice.completed_roll: # if the dice has been rolled, it can roll
@@ -119,13 +118,16 @@ class Game:
             if can_play: # if it can play
                 if self.selected_player is not None and not self.move_player: # check if has selected a player and not already moved
                     self.show_moves()
-                elif self.move_player: # if the player has been moved and
+                elif self.move_player and self.selected_player is not None: # if the player has been moved and
                     self.selected_player.possible_moves.clear() # clear the move indicators
                     moved = self.selected_player.move_player() # move the player and store the result in 'moved'
                     if moved and not self.dice.double_roll: # when moved is true, go to the next player if it can't roll again
-                        self.occupied_positions.append(self.selected_player.pos)
+                        self.check_collision()
+                        self.occupied_positions[self.selected_player] = self.selected_player.pos
                         self.next_player()
                     elif moved: # play again, reset
+                        self.check_collision()
+                        self.occupied_positions[self.selected_player] = self.selected_player.pos
                         self.double_roll_reset()
             else:
                 self.next_player()
@@ -148,6 +150,19 @@ class Game:
                     player[i].scale = player[i].start_scale
                 player[i].possible_moves.clear()
 
+    def check_collision(self): # check this before moving
+        for unit in self.occupied_positions.keys():
+            print(self.selected_player.pos)
+            print("Unit {0} @ Position {1}".format(unit.color, unit.pos))
+            # check if they're the same positions
+            if int(self.selected_player.pos.x) == int(unit.pos.x) and int(self.selected_player.pos.y) == int(unit.pos.y):
+                print(self.selected_player.color)
+                print(unit.color)
+                if self.selected_player.color != unit.color:
+                    unit.reset_player()
+                    return
+
+
     def next_player(self): # reset
         self.selected_player = None
         self.move_player = False
@@ -165,7 +180,7 @@ class Game:
             self.dice.show_static_dice(current_team)
         # ROLL DICE #
         if self.dice.roll:
-            self.dice.animate_dice(current_team)
+            self.dice.animate_dice()
 
     def render(self):
         # DRAW BOARD #
