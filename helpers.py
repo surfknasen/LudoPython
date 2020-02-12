@@ -2,6 +2,11 @@ from enum import Enum
 from pygame import Vector2
 
 
+class PlayerType():
+    none = "None"
+    human = "Human"
+    ai = "AI"
+
 class Color(Enum):
     green = (0, 255, 0)
     yellow = (255, 255, 0)
@@ -10,9 +15,11 @@ class Color(Enum):
     white = (255, 255, 255)
     black = (0, 0, 0)
 
+
 class Team:
     def get_name(color): # eg "Color.green". Removes the "Color." and returns "Green"
         return str(color).split(".")[-1].capitalize()
+
 
 class StartPosition: # measured in gimp
     def get_pos(color):

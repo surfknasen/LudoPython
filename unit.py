@@ -4,25 +4,31 @@ from pygame import Vector2
 import math
 
 
-class Player:
-    def __init__(self, start_pos, path, color, game_class):
+class Unit:  # RENAME ALL PLAYER TO UNIT
+    def __init__(self, start_pos, color, game_class):
         self.start_pos = start_pos
         self.pos = Vector2(start_pos.x, start_pos.y)
-        self.path = path
         self.color = color
         self.current_pos_index = -1
         self.start_scale = 7
         self.scale = self.start_scale
         self.game_class = game_class
+        self.path = self.get_path(color)
 
         self.possible_moves = []
 
+    def get_path(self, color):
+        if color == Color.green:
+            return self.game_class.board.green_path
+        elif color == Color.yellow:
+            return self.game_class.board.yellow_path
+        elif color == Color.red:
+            return self.game_class.board.red_path
+        elif color == Color.blue:
+            return self.game_class.board.blue_path
+
     def reset_player(self):
-        print("reset")
         self.pos = Vector2(self.start_pos.x, self.start_pos.y)
-        print(id(self.pos))
-        print(id(self.start_pos))
-        print("startPos {0} pos {1}".format(self.start_pos, self.pos)) # WTF
         self.current_pos_index = -1
 
     def move_player(self):
@@ -48,40 +54,47 @@ class Player:
             return True
         return False
 
-    def is_over_move(self, mouse_pos, steps):
+    def is_over_move(self, mouse_pos):
         scale = self.scale + 5
-        for moves in self.possible_moves:
-            sqx = (mouse_pos[0] - moves.x)**2
-            sqy = (mouse_pos[1] - moves.y)**2
+        for move in self.possible_moves:
+            print("Mouse pos: {0} Possible move {1}".format(mouse_pos, move))
+            sqx = (mouse_pos[0] - move.x)**2
+            sqy = (mouse_pos[1] - move.y)**2
             if math.sqrt(sqx + sqy) < scale:
-                return True
+                return self.path.index(move)
         return False
 
-    def can_move(self, dice_num):
+    def can_move(self, spot_index):
+        dice_num = self.game_class.dice.dice_num
         if self.current_pos_index == -1:
             if dice_num == 1 or dice_num == 6:
-                return self._spot_free(dice_num)
+                return self.spot_free(spot_index)
             else:
                 return False
-        return self._spot_free(dice_num)
+        return self.spot_free(spot_index)
 
-    def _spot_free(self, dice_num):
-        if self.path[self.current_pos_index + dice_num] not in self.game_class.occupied_positions.values():
+    def spot_free(self, spot_index):
+        if self.path[spot_index] not in self.game_class.occupied_positions.values(): # list index out of range
             return True
         else:
-            for player, pos in self.game_class.occupied_positions.items():
-                if pos == self.path[self.current_pos_index + dice_num]:
+            for player, pos in self.game_class.occupied_positions.items(): # RETURNS HERE FOR THE BOT
+                if pos == self.path[spot_index]:
                     if player.color == self.color:
                         return False
         return True
 
     def show_moves(self, dice_num):
+        print("Show moves")
         self.possible_moves.clear()
-        if self.can_move(dice_num):
+        print(self.current_pos_index+dice_num)
+        if self.can_move(self.current_pos_index + dice_num):
             self.possible_moves.append(self.path[self.current_pos_index + dice_num])
-            if dice_num == 6 and self.current_pos_index == -1:
-                self.possible_moves.append(self.path[0])
             self.scale = self.start_scale + 2
+
+        # if it's a number 6
+        if dice_num == 6 and self.current_pos_index == -1:
+            if self.can_move(0): # check if the first spot is taken
+                self.possible_moves.append(self.path[0])
 
     def draw_moves(self, screen):
         for move in self.possible_moves:

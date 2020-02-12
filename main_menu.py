@@ -1,7 +1,7 @@
 import pygame
 import game
 from pygame import Vector2
-from helpers import Color
+from helpers import Color, PlayerType
 import pygame_extended as gui
 
 
@@ -17,7 +17,7 @@ class MainMenu:
         self.update_screen = True
         self.buttons = []
 
-        self.team_btn_states = ['None', 'Human', 'AI']
+        self.team_btn_states = [PlayerType.none, PlayerType.human, PlayerType.ai]
         self.selected_players = {}
 
         self.update()
