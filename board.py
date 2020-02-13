@@ -40,12 +40,12 @@ class Board:
         size = 175
         pos = int(screen_size.y)
         pygame.draw.circle(screen, Color.dark_blue.value, (0, 0), size)
-        pygame.draw.circle(screen, Color.red.value, (pos, 0), size)
-        pygame.draw.circle(screen, Color.green.value, (pos, pos), size)
-        pygame.draw.circle(screen, Color.yellow.value, (0, pos), size)
+        pygame.draw.circle(screen, Color.dark_red.value, (pos, 0), size)
+        pygame.draw.circle(screen, Color.dark_green.value, (pos, pos), size)
+        pygame.draw.circle(screen, Color.dark_yellow.value, (0, pos), size)
 
     def draw_tile(self, screen, pos, color):
-        pygame.draw.circle(screen, color, (int(pos.x), int(pos.y)), 15)
+        pygame.draw.circle(screen, color, (int(pos.x), int(pos.y)), 20)
 
     def create_paths(self):
         green_dir = ['left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left']

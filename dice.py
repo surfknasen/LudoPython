@@ -59,8 +59,11 @@ class Dice:
         self.screen.blit(img, (self.center, self.center))
 
     def transparent_background(self):
-        img = pygame.transform.scale(pygame.image.load('images/black_transparent.png'), (596, 596))
-        self.screen.blit(img, (0, 0))
+        transparent = pygame.Surface((1000, 1000)).convert_alpha()
+        transparent.fill((0, 0, 0, 150))
+        transparent_rect = transparent.get_rect()
+        transparent_rect.center = (self.screen_size.y // 2, self.center)
+        self.screen.blit(transparent, transparent_rect)
 
     def current_player_text(self):
         font = pygame.font.Font('freesansbold.ttf', 32)

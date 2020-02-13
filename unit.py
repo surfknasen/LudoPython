@@ -10,7 +10,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
         self.pos = Vector2(start_pos.x, start_pos.y)
         self.color = color
         self.current_pos_index = -1
-        self.start_scale = 9
+        self.start_scale = 12
         self.scale = self.start_scale
         self.game_class = game_class
         self.path = self.get_path(color)
@@ -41,7 +41,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
             return True
 
     def is_over_player(self, mouse_pos):
-        scale = self.scale + 5
+        scale = self.scale + 7
         sqx = (mouse_pos[0] - self.pos.x)**2
         sqy = (mouse_pos[1] - self.pos.y)**2
         if math.sqrt(sqx + sqy) < scale:
@@ -49,7 +49,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
         return False
 
     def is_over_move(self, mouse_pos):
-        scale = self.scale + 5
+        scale = self.scale + 7
         for move in self.possible_moves:
             sqx = (mouse_pos[0] - move.x)**2
             sqy = (mouse_pos[1] - move.y)**2
@@ -90,7 +90,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
     def draw_player(self, screen):
         x = int(self.pos.x)
         y = int(self.pos.y)
-        pygame.draw.circle(screen, Color.white.value, (x, y), self.scale + 3)
+        pygame.draw.circle(screen, Color.white.value, (x, y), self.scale + 2)
         pygame.draw.circle(screen, self.color.value, (x, y), self.scale)
 
     def draw_moves(self, screen):
