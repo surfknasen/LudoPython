@@ -18,7 +18,7 @@ class Button:
         pygame.draw.rect(screen, self.color.value, button)  # draw button
 
         text_pos = self.pos + (self.scale // 2)
-        txt = Text(self.text, self.font_size, text_pos)
+        txt = Text(self.text, self.font_size, text_pos, Color.white.value)
         txt.draw(screen)
 
     # if cursor is over, call method
@@ -29,14 +29,15 @@ class Button:
 
 
 class Text:
-    def __init__(self, text, font_size, pos):
+    def __init__(self, text, font_size, pos, color):
         self.text = text
         self.font_size = font_size
         self.pos = pos
+        self.color = color
 
     def draw(self, screen):
         font = pygame.font.Font('freesansbold.ttf', self.font_size)
-        text = font.render(self.text, True, Color.white.value)
+        text = font.render(self.text, True, self.color)
         text_rect = text.get_rect()
         text_rect.center = (self.pos.x, self.pos.y)
         screen.blit(text, text_rect)

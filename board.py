@@ -2,13 +2,13 @@ import pygame
 from pygame import (
     Vector2
 )
+from helpers import Color
 
 # builds and stores the paths
 class Board:
     def __init__(self, screen_size):
-        self.board_img = pygame.transform.scale(pygame.image.load('images/ludo.png'), (screen_size, screen_size))
-
-        # declare the start positions of the different colors, these were calculated in gimp
+        # declare the start positions of the different colors
+        # originally I used an image as the board, but then I changed to drawing it and the values I had to begin with stayed
         self.green_start = Vector2(554.5, 350)
         self.yellow_start = Vector2(247.3, 554.8)
         self.red_start = Vector2(349.7, 42.8)
@@ -25,8 +25,27 @@ class Board:
         # populate the path lists with the rest of the positions
         self.create_paths()
 
-    def draw_board(self, screen):
-        screen.blit(self.board_img, (0, 0))
+    def draw_board(self, screen, screen_size):
+        # draw paths
+        screen.fill(Color.beige.value)
+        paths = {Color.green.value : self.green_path, Color.yellow.value : self.yellow_path, Color.red.value : self.red_path, Color.blue.value : self.blue_path}
+        for color, path in paths.items():
+            for spot in path:
+                if path.index(spot) >= len(path) - 4:
+                    self.draw_tile(screen, spot, color)
+                else:
+                    self.draw_tile(screen, spot, Color.brown.value)
+
+        #draw homes
+        size = 175
+        pos = int(screen_size.y)
+        pygame.draw.circle(screen, Color.dark_blue.value, (0, 0), size)
+        pygame.draw.circle(screen, Color.red.value, (pos, 0), size)
+        pygame.draw.circle(screen, Color.green.value, (pos, pos), size)
+        pygame.draw.circle(screen, Color.yellow.value, (0, pos), size)
+
+    def draw_tile(self, screen, pos, color):
+        pygame.draw.circle(screen, color, (int(pos.x), int(pos.y)), 15)
 
     def create_paths(self):
         green_dir = ['left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left']
@@ -37,8 +56,8 @@ class Board:
         dir_lists = [green_dir, yellow_dir, red_dir, blue_dir]
         paths = [self.green_path, self.yellow_path, self.red_path, self.blue_path]
 
-        steps = [4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 1, 5] # how many steps before each turn
-        step_amount = 51.2 # how many coordinates to move during a step, measured in gimp
+        steps = [4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 1, 4] # how many steps before each turn
+        step_amount = 51.2 # how many coordinates to move during a step
 
         for i in range(4): # because there are 4 colors
             step_index = 0 #

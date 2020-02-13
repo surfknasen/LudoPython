@@ -1,8 +1,7 @@
-# This simulates a player. I wanted it to look like a player, so it selects a player and then clicks the desired spot instead of moving instantly
 import random
-from pygame import Vector2, time
+from pygame import Vector2
 
-
+# simulates a player's controls
 class BotController:
     def __init__(self, units, game_class):
         self.units = units
@@ -34,33 +33,20 @@ class BotController:
                     self.current_unit = None
 
     def select_unit(self):
-        if self.game.dice.dice_num == 1 or self.game.dice.dice_num == 6:
+        if self.game.dice.dice_num == 1 or self.game.dice.dice_num == 6: # if it's 1 or 6, check if there's a character at the start that can move
             for unit in self.units:
                 if unit.current_pos_index == -1:
                     if unit.can_move(unit.current_pos_index + self.game.dice.dice_num):
-                        print(unit.pos)
                         i = self.units.index(unit)
                         self.current_unit = self.units[i]
-                        print("can move")
                         return
 
-        if self.current_unit is None:
+        if self.current_unit is None: # if there's no character at the start that can move if it's 1 or 6, move another unit
             for unit in self.units:
                 if unit.can_move(unit.current_pos_index + self.game.dice.dice_num):
                     i = self.units.index(unit)
                     self.current_unit = self.units[i]
                     return
-        """
-        for unit in self.units:
-            if self.game.dice.dice_num == 1 or self.game.dice.dice_num == 6:
-                if unit.current_pos_index == -1:
-                    if unit.can_move(self.game.dice.dice_num):
-                        i = self.units.index(unit)
-                        break
-            elif unit.can_move(self.game.dice.dice_num):
-                i = self.units.index(unit)
-                break
-        """
 
     def select_pos(self):
         #self.move_to_pos = self.current_unit.possible_moves[0]

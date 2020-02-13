@@ -1,7 +1,9 @@
 import pygame
+from pygame import Vector2
 import board
 import unit
 import dice
+import leaderboard
 import bot_controller
 from helpers import (
     StartPosition,
@@ -11,11 +13,12 @@ from helpers import (
 
 
 class Game:
-    def __init__(self, screen_size, colors):
-        self.screen_size = screen_size
+    def __init__(self, players):
         # set up board
         self.running = True
-        self.screen = pygame.display.set_mode([self.screen_size, self.screen_size])
+        self.screen_size = Vector2(800, 596)
+        self.screen = pygame.display.set_mode([int(self.screen_size.x), int(self.screen_size.y)])
+        self.lboard = leaderboard.Leaderboard(self.screen_size, self.screen)
         self.clock = pygame.time.Clock()
         self.board = board.Board(self.screen_size)
         self.dice = dice.Dice(self.screen, self.screen_size)
@@ -24,13 +27,13 @@ class Game:
         self.bots = []
         self.current_playing_type = []
 
-        for color in colors.keys(): # add the color (player) if the color should play
+        for color in players.keys(): # add the color (player) if the color should play
             new_units = []
             for i in range(4):
                 new_units.append(unit.Unit(StartPosition.get_pos(color)[i], color, self))
                 self.occupied_positions[new_units[i]] = new_units[i].pos
 
-            if colors[color] == PlayerType.ai:
+            if players[color] == PlayerType.ai:
                 self.bots.append(bot_controller.BotController(new_units, self))
                 self.current_playing_type.append(PlayerType.ai)
             else:
@@ -192,7 +195,7 @@ class Game:
 
     def render(self):
         # DRAW BOARD #
-        self.board.draw_board(self.screen)
+        self.board.draw_board(self.screen, self.screen_size)
         # UNITS
         for i in range(len(self.all_units)):
             for player in self.all_units[i]:
@@ -202,4 +205,7 @@ class Game:
         # DICE
         if not self.dice.completed_roll: # if it hasn't been rolled, show it
             self.dice.draw_dice()
+
+        # Leader board
+        self.lboard.draw_leaderboard()
         pygame.display.update()

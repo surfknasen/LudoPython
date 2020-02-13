@@ -8,7 +8,7 @@ class Dice:
 
         self.screen = screen
         self.screen_size = screen_size
-        self.center = (screen_size // 2) - 51.5 # calculate the screen center by using the screen size and half of the dice width/height
+        self.center = (screen_size.y // 2) - 51.5 # calculate the screen center by using the screen size and half of the dice width/height
         self.current_playing = None
 
         self.roll_time = 100 # ms
@@ -35,6 +35,7 @@ class Dice:
             self.dice_num = rand
             self.dice_img = self.images[rand-1]
         else:
+            self.dice_num = 6
             if self.double_roll is True:
                 self.double_roll = False
             elif self.dice_num == 6:
@@ -66,5 +67,5 @@ class Dice:
         cur_team = "{0}'s turn".format(self.current_playing)
         text = font.render(cur_team, True, (255, 255, 255))
         text_rect = text.get_rect()
-        text_rect.center = (self.screen_size // 2, self.center - 50)
+        text_rect.center = (self.screen_size.y // 2, self.center - 50)
         self.screen.blit(text, text_rect)

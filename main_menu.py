@@ -9,9 +9,9 @@ class MainMenu:
     def __init__(self):
         pygame.init() # initialize pygame
         self.running = True
-        self.screen_size = 596
-        self.screen = pygame.display.set_mode([self.screen_size, self.screen_size])
-        self.center = self.screen_size // 2
+        self.screen_size = Vector2(596, 596)
+        self.screen = pygame.display.set_mode([int(self.screen_size.x), int(self.screen_size.y)])
+        self.center = self.screen_size.x // 2
 
         self.current_screen = 0 # change when button pressed
         self.update_screen = True
@@ -23,7 +23,7 @@ class MainMenu:
         self.update()
 
     def update(self):
-        menu_txt = gui.Text("Menu", 32, Vector2(self.center, 50))
+        menu_txt = gui.Text("Menu", 32, Vector2(self.center, 50), Color.white.value)
         self.create_buttons()
 
         while self.running:
@@ -63,7 +63,7 @@ class MainMenu:
         self.update_screen = True
 
     def start_game(self, button):
-        game.Game(self.screen_size, self.selected_players) # start the game
+        game.Game(self.selected_players) # start the game
         self.running = False
 
     def handle_input(self):

@@ -11,9 +11,12 @@ class Color(Enum):
     green = (0, 255, 0)
     yellow = (255, 255, 0)
     blue = (0, 0, 255)
+    dark_blue = (0, 0, 200)
     red = (255, 0, 0)
     white = (255, 255, 255)
     black = (0, 0, 0)
+    beige = (249, 228, 183)
+    brown = (206, 177, 128)
 
 
 class Team:
