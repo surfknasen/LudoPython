@@ -76,8 +76,8 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
     def spot_free(self, spot_index):
         if self.path[spot_index] not in self.game_class.occupied_positions.values(): # list index out of range
             return True
-        else:
-            for player, pos in self.game_class.occupied_positions.items(): # RETURNS HERE FOR THE BOT
+        else: # check if the occupied spot is the same color
+            for player, pos in self.game_class.occupied_positions.items():
                 if pos == self.path[spot_index]:
                     if player.color == self.color:
                         return False

@@ -18,7 +18,6 @@ class BotController:
                 if unit.can_move(self.game.dice.dice_num):
                     i = self.units.index(unit)
                 break
-            print("Completed roll")
             self.current_unit = self.units[i]
             self.game.mouse_clicked(self.current_unit.pos)
             self.clicked_unit = True

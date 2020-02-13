@@ -27,7 +27,8 @@ class Dice:
         self.roll = True
         self.roll_start = pygame.time.get_ticks()
 
-    def animate_dice(self):
+    def animate_dice(self, current_playing):
+        self.current_playing = current_playing
         time_since_roll = pygame.time.get_ticks() - self.roll_start
         if time_since_roll < self.roll_time:
             rand = random.randrange(1, 7) # 1 to 6
@@ -38,10 +39,11 @@ class Dice:
                 self.double_roll = False
             elif self.dice_num == 6:
                 self.double_roll = True
+            print("Rolled {0}".format(self.dice_num))
             self.roll = False
             self.completed_roll = True
             self.current_playing = None
-            pygame.time.wait(100) # so that the player has time to see what number
+            pygame.time.wait(1000) # so that the player has time to see what number
             return
 
         # make it roll fast at the start and then slow down
@@ -49,6 +51,8 @@ class Dice:
          #   pygame.time.wait(int(time_since_roll / 10))
 
     def draw_dice(self):
+        if self.current_playing is None:
+            return
         self.transparent_background()
         self.current_player_text()
         img = pygame.image.load(self.dice_img)
