@@ -39,7 +39,6 @@ class Dice:
                 self.double_roll = False
             elif self.dice_num == 6:
                 self.double_roll = True
-            print("Rolled {0}".format(self.dice_num))
             self.roll = False
             self.completed_roll = True
             self.current_playing = None

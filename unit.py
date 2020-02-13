@@ -57,7 +57,6 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
     def is_over_move(self, mouse_pos):
         scale = self.scale + 5
         for move in self.possible_moves:
-            print("Mouse pos: {0} Possible move {1}".format(mouse_pos, move))
             sqx = (mouse_pos[0] - move.x)**2
             sqy = (mouse_pos[1] - move.y)**2
             if math.sqrt(sqx + sqy) < scale:
@@ -84,9 +83,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
         return True
 
     def show_moves(self, dice_num):
-        print("Show moves")
         self.possible_moves.clear()
-        print(self.current_pos_index+dice_num)
         if self.can_move(self.current_pos_index + dice_num):
             self.possible_moves.append(self.path[self.current_pos_index + dice_num])
             self.scale = self.start_scale + 2

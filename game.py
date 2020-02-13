@@ -43,6 +43,7 @@ class Game:
         self.selected_unit = None
         self.move_unit = False
         self.is_moving = False
+        self.ai_playing = False
 
         self.update() # start the game loop
 
@@ -67,12 +68,12 @@ class Game:
         """
 
         while self.running:
-            ai_playing = self.current_playing_type[self.current_playing] is PlayerType.ai
+            self.ai_playing = self.current_playing_type[self.current_playing] is PlayerType.ai
             # Input
-            self.handle_input(ai_playing)
+            self.handle_input()
             self.throw_dice()
             self.player_action()
-            if ai_playing:
+            if self.ai_playing:
                 self.bots[self.current_playing].input()
                 self.bots[self.current_playing].move_unit()
                 self.player_action()
@@ -83,11 +84,11 @@ class Game:
 
         pygame.quit()
 
-    def handle_input(self, ai_playing):
+    def handle_input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: # close button
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and not self.ai_playing:
                 self.mouse_clicked(pygame.mouse.get_pos())
 
     def mouse_clicked(self, mouse_pos): # this is used by both the ai and player, therefore I want to pass in the mouse pos so the ai can simulate
@@ -123,7 +124,6 @@ class Game:
                         self.selected_unit.scale = self.selected_unit.start_scale
                         self.selected_unit = None
                     else:
-                        print("selecting")
                         # dont run every frame from bot
                         self.selected_unit = unit
 
@@ -142,7 +142,6 @@ class Game:
                     self.selected_unit.possible_moves.clear() # clear the move indicators
                     moved = self.selected_unit.move_player() # move the player and store the result in 'moved'
                     self.is_moving = not moved
-                    print("Current color {0}".format(self.selected_unit.color))
                     if moved and not self.dice.double_roll: # when moved is true, go to the next player if it can't roll again
                         self.check_collision()
                         self.occupied_positions[self.selected_unit] = self.selected_unit.pos
@@ -197,7 +196,8 @@ class Game:
         # UNITS
         for i in range(len(self.all_units)):
             for player in self.all_units[i]:
-                player.draw_moves(self.screen)
+                if not self.ai_playing:
+                    player.draw_moves(self.screen)
                 player.draw_player(self.screen)
         # DICE
         if not self.dice.completed_roll: # if it hasn't been rolled, show it
