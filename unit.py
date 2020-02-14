@@ -17,6 +17,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
 
         self.possible_moves = []
 
+    # get the path for this color
     def get_path(self, color):
         if color == Color.green:
             return self.game_class.board.green_path
@@ -27,10 +28,13 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
         elif color == Color.blue:
             return self.game_class.board.blue_path
 
+    # reset player when it has been knocked
     def reset_player(self):
         self.pos = Vector2(self.start_pos.x, self.start_pos.y)
+        self.game_class.occupied_positions[self] = self.pos
         self.current_pos_index = -1
 
+    # lerp player position
     def move_player(self):
         if self.pos != self.path[self.current_pos_index]:
             dx, dy = (self.path[self.current_pos_index].x - self.pos.x, self.path[self.current_pos_index].y - self.pos.y)
@@ -40,6 +44,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
         else:
             return True
 
+    # check if the mouse is clicked on the plaayer
     def is_over_player(self, mouse_pos):
         scale = self.scale + 7
         sqx = (mouse_pos[0] - self.pos.x)**2
@@ -48,6 +53,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
             return True
         return False
 
+    # check if the mouse is clicked on the move
     def is_over_move(self, mouse_pos):
         scale = self.scale + 7
         for move in self.possible_moves:
@@ -57,6 +63,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
                 return self.path.index(move)
         return False
 
+    # check if it can move
     def can_move(self, spot_index):
         dice_num = self.game_class.dice.dice_num
         if self.current_pos_index == -1:
@@ -66,7 +73,10 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
                 return False
         return self.spot_free(spot_index)
 
+    # check if a spot is free
     def spot_free(self, spot_index):
+        if spot_index >= len(self.path)-1:
+            return True
         if self.path[spot_index] not in self.game_class.occupied_positions.values(): # list index out of range
             return True
         else: # check if the occupied spot is the same color
@@ -76,10 +86,15 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
                         return False
         return True
 
+    # show the moves the unit can do
     def show_moves(self, dice_num):
-        self.possible_moves.clear()
-        if self.can_move(self.current_pos_index + dice_num):
-            self.possible_moves.append(self.path[self.current_pos_index + dice_num])
+        if len(self.possible_moves) > 0:
+            self.possible_moves.clear()
+        spot_index = self.current_pos_index + dice_num
+        if spot_index >= len(self.path)-1:
+            spot_index = len(self.path)-1
+        if self.can_move(spot_index):
+            self.possible_moves.append(self.path[spot_index])
             self.scale = self.start_scale + 2
 
         # if it's a number 6
@@ -87,6 +102,7 @@ class Unit:  # RENAME ALL PLAYER TO UNIT
             if self.can_move(0): # check if the first spot is taken
                 self.possible_moves.append(self.path[0])
 
+    # rendering stuff
     def draw_player(self, screen):
         x = int(self.pos.x)
         y = int(self.pos.y)

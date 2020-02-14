@@ -1,7 +1,6 @@
 import pygame
 from helpers import Color
 
-
 class Button:
     def __init__(self, text, font_size, pos, scale, color, callback):
         self.text = text

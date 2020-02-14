@@ -29,10 +29,13 @@ class Board:
         # draw paths
         screen.fill(Color.beige.value)
         paths = {Color.green.value : self.green_path, Color.yellow.value : self.yellow_path, Color.red.value : self.red_path, Color.blue.value : self.blue_path}
+        # lay out the path by using the paths positions and add the correct color
         for color, path in paths.items():
             for spot in path:
-                if path.index(spot) >= len(path) - 4:
+                if len(path) - 5 <= path.index(spot) < len(path) - 1:
                     self.draw_tile(screen, spot, color)
+                elif path.index(spot) == len(path) - 1:
+                    self.draw_tile(screen, spot, Color.black.value)
                 else:
                     self.draw_tile(screen, spot, Color.brown.value)
 
@@ -44,9 +47,11 @@ class Board:
         pygame.draw.circle(screen, Color.dark_green.value, (pos, pos), size)
         pygame.draw.circle(screen, Color.dark_yellow.value, (0, pos), size)
 
+    # draw a circle tile
     def draw_tile(self, screen, pos, color):
         pygame.draw.circle(screen, color, (int(pos.x), int(pos.y)), 20)
 
+    # create the paths that each color can take
     def create_paths(self):
         green_dir = ['left', 'down', 'left', 'up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left']
         yellow_dir = ['up', 'left', 'up', 'right', 'up', 'right', 'down', 'right', 'down', 'left', 'down', 'left', 'up']
@@ -56,7 +61,7 @@ class Board:
         dir_lists = [green_dir, yellow_dir, red_dir, blue_dir]
         paths = [self.green_path, self.yellow_path, self.red_path, self.blue_path]
 
-        steps = [4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 1, 4] # how many steps before each turn
+        steps = [4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 1, 5] # how many steps before each turn
         step_amount = 51.2 # how many coordinates to move during a step
 
         for i in range(4): # because there are 4 colors
