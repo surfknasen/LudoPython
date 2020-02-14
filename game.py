@@ -94,7 +94,7 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # close button
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and not self.ai_playing:
                 self.mouse_clicked(pygame.mouse.get_pos())
 
     # if the mouse has been clicked, start roll of handle player/unit input
